@@ -58,6 +58,10 @@ catkin_package(
 ## Build ##
 ###########
 
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
+
 add_executable(rpi_listener src/listener.cpp)
 target_link_libraries(rpi_listener ${catkin_LIBRARIES})
 add_dependencies(rpi_listener ${catkin_EXPORTED_TARGETS})
