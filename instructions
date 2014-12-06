@@ -1,0 +1,24 @@
+1. install avahi-daemon 
+on the machines you want talking to eachother, and you should be 
+set to use HOSTNAME.local like this:
+$ ssh yourmachine.local
+
+TODO:
+	sudo apt-get install avahi-daemon
+	sudo apt-get install libnss-mdns 
+
+.bashrc master:
+	export ROS_HOSTNAME=ros-linux.local
+	export ROS_MASTER_URI=http://ros-linux.local:11311
+
+.bashrc rpi:
+	export ROS_HOSTNAME=raspberrypi.local
+	export ROS_MASTER_URI=http://ros-linux.local:11311
+
+	
+	
+#bsc AF_INET error, set the ip	
+#	export ROS_IP=10.0.0.25 #hostname -I
+============================
+
+2.
