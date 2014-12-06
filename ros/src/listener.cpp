@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "rpi_listener");
 	ros::NodeHandle n;
 
-	sub = n.subscribe("master_publisher", 1000, &receivedMsg);
+	sub = n.subscribe("/master_publisher", 1000, &receivedMsg);
 
 	ros::spin();
 	return 0;
