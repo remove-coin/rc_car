@@ -3,19 +3,12 @@
 
 ros::Publisher pub;
 
-
-
-void receivedMsg(const std_msgs::Float64 msg)
-{
-        ROS_INFO("%d", msg.data);
-}
-
 int main(int argc, char **argv)
 {
         ros::init(argc, argv, "srv_listener");
         ros::NodeHandle n;
 
-        ros::Duration loop_time = 1.0;
+        ros::Duration loop_time = ros::Duration(1.0);
 
         std_msgs::Float64 msg;
 
