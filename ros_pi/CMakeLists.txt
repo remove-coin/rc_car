@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ros)
+project(ros_pi)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -8,7 +8,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  message_generation
 )
+
+#find_package(Boost REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -17,41 +20,26 @@ find_package(catkin REQUIRED COMPONENTS
 ## Declare ROS messages, services and actions ##
 ################################################
 
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
-
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  Rpi_car.srv
+)
 
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
 
 ###################################
 ## catkin specific configuration ##
 ###################################
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES ros
-#  CATKIN_DEPENDS roscpp rospy std_msgs
-#  DEPENDS system_lib
+#  LIBRARIES ros-pi
+  CATKIN_DEPENDS roscpp rospy std_msgs
+  DEPENDS system_lib
 )
 
 ###########
@@ -60,8 +48,13 @@ catkin_package(
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  #${Boost_INCLUDE_DIR} 
 )
 
 add_executable(rpi_listener src/listener.cpp)
 target_link_libraries(rpi_listener ${catkin_LIBRARIES})
 add_dependencies(rpi_listener ${catkin_EXPORTED_TARGETS})
+
+add_executable(car_service src/car_service.cpp)
+target_link_libraries(car_service ${catkin_LIBRARIES})
+add_dependencies(car_service ${catkin_EXPORTED_TARGETS})
