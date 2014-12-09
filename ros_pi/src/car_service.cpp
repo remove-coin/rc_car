@@ -3,7 +3,7 @@
 
 /// ===============================
 void goLeft() {
-
+    ROS_INFO("Going left");
 }
 
 /// ===============================
@@ -27,7 +27,6 @@ bool plan(ros_pi::Rpi_car::Request  &req,
     /// ############ ///
     default:
     {
-        //res.TrajMsg = getTrajMsg(pos);
         return false;
         break;}
     }
