@@ -12,7 +12,7 @@
 
 #include <opencv2/opencv.hpp>
 #include "ros_pi/Rpi_car.h"
-#include "sensor_msgs/CompressedImage.h"
+#include "sensor_msgs/Image.h"
 #include <image_transport/image_transport.h>
 
 namespace Ui {
@@ -28,16 +28,20 @@ public:
     ~RC_Car();
 
 private:
-    virtual void imageCB(const sensor_msgs::CompressedImage::ConstPtr&  _msg);
+    virtual void ImageCB(const sensor_msgs::Image::ConstPtr&  _msg);
 
 signals:
-    void cbOut(QString);
+    void cbOut(QImage);
 
 protected slots:
+
     virtual void goLeft();
+    virtual void stopLeft();
+    virtual void goRight();
+    virtual void stopRight();
     virtual void startCam();
     virtual void stopCam();
-    void vidUp(QString);
+    void vidUp(QImage);
     void printOut(std::string);
     void printOut(QString);
     

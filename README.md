@@ -43,3 +43,17 @@ rosdep install --from-paths src --ignore-src --rosdistro indigo -y -r --os=debia
 
 sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/indigo
 
+
+
+
+
+
+###### USAGE ######
+ON the rpi:
+start the camera node
+	rosrun raspicam raspicam_node
+	
+start the car service node	
+
+
+rosrun image_view image_view image:=/camera/image _image_transport:=compressed

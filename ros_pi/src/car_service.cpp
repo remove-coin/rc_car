@@ -1,14 +1,12 @@
 #include "ros/ros.h"
 #include "ros_pi/Rpi_car.h"
 
-/// ===============================
-void goLeft() {
-    ROS_INFO("Going left");
-}
+int direction, speed;
+bool accelerate, brake, lights;
 
 /// ===============================
-void goRight() {
-
+void honk() {
+    //honk
 }
 
 /// ===============================
@@ -16,13 +14,37 @@ bool plan(ros_pi::Rpi_car::Request  &req,
          ros_pi::Rpi_car::Response &res)
 {
     switch(req.mode) {
-    case 1: ///
+    case -4: ///un-brake
     {
-        goLeft();
+        brake = false;
         break;}
-    case 2: ///
+    case -3: ///un-accelerate
     {
-        goRight();
+        accelerate = false;
+        break;}
+    case -2: ///un-right
+    {
+        direction = 0;
+        break;}
+    case -1: ///un-left
+    {
+        direction = 0;
+        break;}
+    case 1: ///left
+    {
+        direction = 1;
+        break;}
+    case 2: ///right
+    {
+        direction = -1;
+        break;}
+    case 3: ///accelerate
+    {
+        accelerate = true;
+        break;}
+    case 4: ///brake
+    {
+        brake = true;
         break;}
     /// ############ ///
     default:
@@ -36,12 +58,33 @@ bool plan(ros_pi::Rpi_car::Request  &req,
 /// ===============================
 int main(int argc, char **argv)
 {
+    direction = 0;
+    speed = 0;
+    accelerate = false;
 
     ros::init(argc, argv, "car_service");
     ros::NodeHandle n;
 
     ros::ServiceServer service = n.advertiseService("/car_service", plan);
-    ros::spin();
+
+    while(ros::ok()) {
+        if(speed < 5 && accelerate == true) {
+            speed++;
+        }
+        if (speed > 0 && brake) {
+            //braking added to rollout
+            speed--;
+        }
+        if (speed > 0 && !accelerate) {
+            //rollout
+            speed--;
+        }
+
+        /** set actual motors connected to the rpi*/
+
+        ros::Duration(0.5).sleep();
+        ros::spinOnce();
+    }
 
     service.shutdown();
 
