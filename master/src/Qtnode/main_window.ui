@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RC_Car</class>
- <widget class="QMainWindow" name="RC_Car">
+ <class>MainWindowDesign</class>
+ <widget class="QMainWindow" name="MainWindowDesign">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>648</width>
-    <height>649</height>
+    <height>651</height>
    </rect>
   </property>
   <property name="windowTitle">
