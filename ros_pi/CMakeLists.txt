@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
-#find_package(Boost REQUIRED)
+set(RASPRPM_LIBRARIES "-lwiringPi")
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -56,5 +56,5 @@ target_link_libraries(rpi_listener ${catkin_LIBRARIES})
 add_dependencies(rpi_listener ${catkin_EXPORTED_TARGETS})
 
 add_executable(car_service src/car_service.cpp)
-target_link_libraries(car_service ${catkin_LIBRARIES})
+target_link_libraries(car_service ${catkin_LIBRARIES} ${RASPRPM_LIBRARIES})
 add_dependencies(car_service ${catkin_EXPORTED_TARGETS})

@@ -1,5 +1,12 @@
 #include "ros/ros.h"
 #include "ros_pi/Rpi_car.h"
+#include <wiringPi.h>
+
+/*
+    define the io pin of the transistor
+*/
+//wiringPi pin 7 == BCM_GPIO 4
+#define	LED_RED	7
 
 int direction, speed;
 bool accelerate, brake, lights;
@@ -62,6 +69,9 @@ int main(int argc, char **argv)
     speed = 0;
     accelerate = false;
 
+    wiringPiSetup();
+    pinMode (LED_RED, OUTPUT) ;
+
     ros::init(argc, argv, "car_service");
     ros::NodeHandle n;
 
@@ -78,6 +88,17 @@ int main(int argc, char **argv)
         if (speed > 0 && !accelerate) {
             //rollout
             speed--;
+        }
+        if(direction != 0) {
+            if(direction == 1) {
+                //go left
+                digitalWrite (LED_RED, HIGH) ;	// On
+                delay (500) ;		// mS
+                digitalWrite (LED_RED, LOW) ;	// Off
+                delay (500) ;
+            } else {
+                //go right
+            }
         }
 
         /** set actual motors connected to the rpi*/
