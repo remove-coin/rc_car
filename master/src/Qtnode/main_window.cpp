@@ -93,6 +93,40 @@ void MainWindow::on_rightB_released(){
 }
 
 /// ====================
+void MainWindow::on_upB_pressed(){
+    if (qnode.call_car(3))    {
+        printOut(QString("speed"));
+    } else  {
+        printOut(QString("Failed to call car_service"));
+    }
+}
+/// ====================
+void MainWindow::on_upB_released(){
+    if (qnode.call_car(-3))    {
+        //printOut(QString("gone right"));
+    } else  {
+        printOut(QString("Failed to call car_service"));
+    }
+}
+
+/// ====================
+void MainWindow::on_downB_pressed(){
+    if (qnode.call_car(4))    {
+        printOut(QString("brake"));
+    } else  {
+        printOut(QString("Failed to call car_service"));
+    }
+}
+/// ====================
+void MainWindow::on_downB_released(){
+    if (qnode.call_car(-4))    {
+        //printOut(QString("gone right"));
+    } else  {
+        printOut(QString("Failed to call car_service"));
+    }
+}
+
+/// ====================
 void MainWindow::printOut(std::string _str) {
     QString str = _str.c_str();
     ui.output->append(str);

@@ -5,11 +5,26 @@
 /*
     define the io pin of the transistor
 */
+//use BCM numbers for code, and wiringPi for export in the setup  sh
 //wiringPi pin 7 == BCM_GPIO 4
-#define	LED_RED	7
+#define	LED_1 7
+//wiringPi pin 4 == BCM_GPIO 23
+#define LED_2 4
+//wiringPi pin 0 == BCM_GPIO 17
+#define LED_3 0
+
+//wiringPi pin 1 == BCM_GPIO 18
+//pwm_pin == enable pin of the engine 
+#define PWM_PIN 1
+
+//amount of gears/pwm levels
+#define TOP_SPEED 20
 
 int direction, speed;
 bool accelerate, brake, lights;
+
+//maximum of 1023
+int values[TOP_SPEED + 1];
 
 /// ===============================
 void honk() {
@@ -68,9 +83,19 @@ int main(int argc, char **argv)
     direction = 0;
     speed = 0;
     accelerate = false;
+    for (int i = 0; i <= TOP_SPEED; i++) {
+    	values[i] = i*(1000/TOP_SPEED);
+    }
 
     wiringPiSetup();
-    pinMode (LED_RED, OUTPUT) ;
+    pinMode (LED_1, OUTPUT);
+    pinMode (LED_2, OUTPUT);
+    pinMode (LED_3, OUTPUT);
+    pinMode (PWM_PIN, PWM_OUTPUT) ;
+
+    //init pins
+    digitalWrite(LED_2, HIGH);
+    pwmWrite (PWM_PIN, 0) ;
 
     ros::init(argc, argv, "car_service");
     ros::NodeHandle n;
@@ -78,32 +103,42 @@ int main(int argc, char **argv)
     ros::ServiceServer service = n.advertiseService("/car_service", plan);
 
     while(ros::ok()) {
-        if(speed < 5 && accelerate == true) {
+        if(speed < TOP_SPEED && accelerate == true) {
             speed++;
+	    pwmWrite(PWM_PIN, values[speed]);
         }
         if (speed > 0 && brake) {
             //braking added to rollout
             speed--;
+	    pwmWrite(PWM_PIN, values[speed]);
         }
         if (speed > 0 && !accelerate) {
             //rollout
             speed--;
+	    pwmWrite(PWM_PIN, values[speed]);
         }
         if(direction != 0) {
             if(direction == 1) {
-                //go left
-                digitalWrite (LED_RED, HIGH) ;	// On
-                delay (500) ;		// mS
-                digitalWrite (LED_RED, LOW) ;	// Off
-                delay (500) ;
+                //ROS_INFO("go left");
+                digitalWrite(LED_1, HIGH);	// On
+		digitalWrite(LED_2, LOW);   // On
+		digitalWrite(LED_3, LOW);   // On
+                //delay (500) ;		// mS
             } else {
-                //go right
+                //ROS_INFO("go right");
+                digitalWrite(LED_1, LOW);
+		digitalWrite(LED_2, LOW);
+		digitalWrite(LED_3, HIGH);
             }
-        }
+        } else {
+		digitalWrite(LED_1, LOW);
+		digitalWrite(LED_2, HIGH);
+		digitalWrite(LED_3, LOW);
 
+	}
         /** set actual motors connected to the rpi*/
 
-        ros::Duration(0.5).sleep();
+        ros::Duration(0.25).sleep();
         ros::spinOnce();
     }
 

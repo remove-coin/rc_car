@@ -50,13 +50,24 @@ If you don't want to compile ros twice, add image_common during step two.
 	https://github.com/fpasteau/raspicam_node/blob/master/README.md
 
 
+ON rpi, ignore master, bcs we don't install qt on it:
+catkin_make -DCATKIN_BLACKLIST_PACKAGES="master"
 
 ###### USAGE ######
+To use pwm in wiringPi, the service must be run as root.
+The rc.launch file creates the service node with the launch-prefix "sudo -E".
+Given a passwordless sudoer, the environtment is kept and the node can be run as root.
+Without the pwm wiringPiSys() can be used as non-root, but all pins use the 
+broadcom numbers and must be exported by a shell script before rosrun.
+
 ON the rpi:
-start the camera node
+start the camera node:
 	rosrun raspicam raspicam_node
 	
-start the car service node	
-
-
+start the car service node:	
+	rosrun ros_pi car_service
+	
+	
+	
+ON the master:
 	rosrun image_view image_view image:=/camera/image _image_transport:=compressed

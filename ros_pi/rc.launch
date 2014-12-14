@@ -1,0 +1,4 @@
+<launch>
+<node name="rc_car_service" pkg="ros_pi" type="car_service" respawn="true" launch-prefix="sudo -E"/>
+
+</launch>

@@ -69,7 +69,4 @@ ADD_EXECUTABLE(qtnode ${sources}
 TARGET_LINK_LIBRARIES(qtnode ${QT_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(qtnode ${catkin_EXPORTED_TARGETS})
 
-add_executable(srv_publisher src/srv_publisher.cpp)
-target_link_libraries(srv_publisher ${catkin_LIBRARIES})
-add_dependencies(srv_publisher ${catkin_EXPORTED_TARGETS})
 
