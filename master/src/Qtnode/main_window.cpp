@@ -41,9 +41,9 @@ MainWindow::~MainWindow() {}
 
 /// ====================
 void MainWindow::vidUp(QImage image) {
-    ROS_INFO("got new img");
-    //ui->label->clear();
-    //ui->label->setPixmap(QPixmap::fromImage(image));
+    //ROS_INFO("got new img");
+    ui.label->clear();
+    ui.label->setPixmap(QPixmap::fromImage(image));
 }
 
 /*****************************************************************************
