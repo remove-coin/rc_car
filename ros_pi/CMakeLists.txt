@@ -51,9 +51,8 @@ include_directories(
   #${Boost_INCLUDE_DIR} 
 )
 
-add_executable(rpi_listener src/listener.cpp)
-target_link_libraries(rpi_listener ${catkin_LIBRARIES})
-add_dependencies(rpi_listener ${catkin_EXPORTED_TARGETS})
+
+
 
 
 

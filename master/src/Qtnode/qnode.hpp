@@ -10,6 +10,7 @@
 #include <QThread>
 #include <QStringListModel>
 #include "sensor_msgs/Image.h"
+#include "sensor_msgs/CompressedImage.h"
 #include "ros_pi/Rpi_car.h"
 #include "std_srvs/Empty.h"
 
@@ -36,7 +37,7 @@ public:
     bool call_car(int mode);
 
 private:
-    virtual void ImageCB(const sensor_msgs::Image::ConstPtr&  _msg);
+    virtual void ImageCB(const sensor_msgs::CompressedImage::ConstPtr&  _msg);
 
 signals:
     void rosShutdown();

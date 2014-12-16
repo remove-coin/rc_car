@@ -41,9 +41,9 @@ MainWindow::~MainWindow() {}
 
 /// ====================
 void MainWindow::vidUp(QImage image) {
-    ROS_INFO("got new img");
-    //ui->label->clear();
-    //ui->label->setPixmap(QPixmap::fromImage(image));
+    //ROS_INFO("got new img");
+    ui.label->clear();
+    ui.label->setPixmap(QPixmap::fromImage(image));
 }
 
 /*****************************************************************************
@@ -86,6 +86,40 @@ void MainWindow::on_rightB_pressed(){
 /// ====================
 void MainWindow::on_rightB_released(){
     if (qnode.call_car(-2))    {
+        //printOut(QString("gone right"));
+    } else  {
+        printOut(QString("Failed to call car_service"));
+    }
+}
+
+/// ====================
+void MainWindow::on_upB_pressed(){
+    if (qnode.call_car(3))    {
+        printOut(QString("speed"));
+    } else  {
+        printOut(QString("Failed to call car_service"));
+    }
+}
+/// ====================
+void MainWindow::on_upB_released(){
+    if (qnode.call_car(-3))    {
+        //printOut(QString("gone right"));
+    } else  {
+        printOut(QString("Failed to call car_service"));
+    }
+}
+
+/// ====================
+void MainWindow::on_downB_pressed(){
+    if (qnode.call_car(4))    {
+        printOut(QString("brake"));
+    } else  {
+        printOut(QString("Failed to call car_service"));
+    }
+}
+/// ====================
+void MainWindow::on_downB_released(){
+    if (qnode.call_car(-4))    {
         //printOut(QString("gone right"));
     } else  {
         printOut(QString("Failed to call car_service"));

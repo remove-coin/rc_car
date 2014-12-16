@@ -38,7 +38,7 @@ bool QNode::init() {
     // Add your ros communications here.
     car_client_ = nh.serviceClient<ros_pi::Rpi_car>("/car_service");
     cam_client_ = nh.serviceClient<ros_pi::Rpi_car>("/camera/image");
-    subscriber_ = nh.subscribe("/camera/image", 1, &QNode::ImageCB, this);
+    subscriber_ = nh.subscribe("/camera/image/compressed", 10, &QNode::ImageCB, this);
     start();
 }
 
@@ -54,17 +54,15 @@ bool QNode::call_car(int mode) {
 }
 
 /// ====================
-void QNode::ImageCB(const sensor_msgs::Image::ConstPtr&  _msg) {
-        ROS_INFO("got update");
-        //sensor_msgs::CvBridge bridge;
-        //frame = bridge.imgMsgToCv(msg, "bgr8");
-        //cv_bridge::toCvShare(msg, "bgr8")->image
-
-        //QImage temp(&(_msg->data[0]), 640, 480, QImage::Format_RGB888);
-        /// QImage temp(&(_msg->data[0]), _msg->width, _msg->height, QImage::Format_ARGB32_Premultiplied);
+void QNode::ImageCB(const sensor_msgs::CompressedImage::ConstPtr&  _msg) {
+        //ROS_INFO("got update");
+        /// TODO get size from cam service
+        uint width = 640;
+        uint height = 480;
+        uint size = width * height;
         QImage temp;
-        //image = temp;
-        //ui->label->setPixmap(QPixmap::fromImage(image));
+        temp.loadFromData(&(_msg->data[0]), size, "JPG");
+
         ros::Duration(0.03).sleep();
 
      emit cbOut(temp);

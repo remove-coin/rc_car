@@ -46,6 +46,10 @@ protected slots:
     virtual void on_leftB_released();
     virtual void on_rightB_pressed();
     virtual void on_rightB_released();
+    virtual void on_upB_pressed();
+    virtual void on_upB_released();
+    virtual void on_downB_pressed();
+    virtual void on_downB_released();
     void printOut(std::string);
     void printOut(QString);
 

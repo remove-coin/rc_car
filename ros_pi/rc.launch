@@ -6,4 +6,5 @@
 	<group if="$(arg cam)">
 		<node name="camera" pkg="raspicam" type="raspicam_node" respawn="false"/>	
 	</group>
+
 </launch>

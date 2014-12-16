@@ -24,7 +24,10 @@ Add host/master exports to ~/.bashrc
 ============================
 
 2.
-follow until step 3: 
+Get the ros_bridge-suite for your ros version:
+	sudo apt-get install ros-<rosversion>-rosbridge-suite
+
+Install ros on your rpi by following until step 3: 
 		http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi 
 		
 We need to add image_common, and do so in a custom_ros.install.
@@ -50,13 +53,28 @@ If you don't want to compile ros twice, add image_common during step two.
 	https://github.com/fpasteau/raspicam_node/blob/master/README.md
 
 
+ON rpi, ignore master, bcs we don't install qt on it:
+catkin_make -DCATKIN_BLACKLIST_PACKAGES="master"
+
 
 ###### USAGE ######
-ON the rpi:
-start the camera node
-	rosrun raspicam raspicam_node
-	
-start the car service node	
+To use pwm in wiringPi, the service must be run as root.
+The rc.launch file creates the service node with the launch-prefix "sudo -E".
+Given a passwordless sudoer, the environtment is kept and the node can be run as root.
+Without the pwm wiringPiSys() can be used as non-root, but all pins use the 
+broadcom numbers and must be exported by a shell script before rosrun.
 
+ON the rpi:
+start the camera and car_service node:
+	roslaunch ros_pi rc.launch
+	
+rosrun raspicam raspicam_node
+rosrun ros_pi car_service
+	
+	
+	
+	
+ON the master:
+	roslaunch master rc_master.launch 
 
 	rosrun image_view image_view image:=/camera/image _image_transport:=compressed
