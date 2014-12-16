@@ -1,0 +1,9 @@
+<launch>
+	<arg name="cam" default="true"/>
+
+	<node name="rc_car_service" pkg="ros_pi" type="car_service" respawn="true" launch-prefix="sudo -E"/>
+
+	<group if="$(arg cam)">
+		<node name="camera" pkg="raspicam" type="raspicam_node" respawn="false"/>	
+	</group>
+</launch>

@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
-set(RASPRPM_LIBRARIES "-lwiringPi")
+set(RASPRPM_LIBRARIES "-lwiringPi -lpthread")
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -37,8 +37,8 @@ generate_messages(
 ###################################
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES ros-pi
-  CATKIN_DEPENDS roscpp rospy std_msgs
+#  LIBRARIES ros_pi
+  CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
   DEPENDS system_lib
 )
 
@@ -55,6 +55,8 @@ add_executable(rpi_listener src/listener.cpp)
 target_link_libraries(rpi_listener ${catkin_LIBRARIES})
 add_dependencies(rpi_listener ${catkin_EXPORTED_TARGETS})
 
+
+
 add_executable(car_service src/car_service.cpp)
 target_link_libraries(car_service ${catkin_LIBRARIES} ${RASPRPM_LIBRARIES})
-add_dependencies(car_service ${catkin_EXPORTED_TARGETS})
+add_dependencies(car_service ${catkin_EXPORTED_TARGETS} ros_pi_gencpp)
