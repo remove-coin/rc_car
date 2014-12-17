@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<script type="text/javascript" src="http://cdn.robotwebtools.org/mjpegcanvasjs/current/mjpegcanvas.min.js"></script>
+
+	<title>Wifi rc car</title>
+	<style>
+body {
+    background-color: #d0e4fe;
+}
+
+h1 {
+    color: orange;
+    text-align: center;
+}
+
+p {
+    font-family: "Times New Roman";
+    font-size: 20px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 0px solid black;
+}
+</style>
+
+<script type="text/javascript" type="text/javascript">
+  /**
+   * Setup all visualization elements when the page is loaded. 
+   */
+  function init() {
+    // Create the main viewer.
+    var viewer = new MJPEGCANVAS.Viewer({
+      divID : 'mjpeg',
+      host : 'localhost',
+      width : 640,
+      height : 480,
+      topic : '/camera/image'
+    });
+  }
+</script>
+
+</head>
+<body>
+
+	<h1>Race me Hannah!</h1>
+<!--
+<div style="text-align:center">
+	<canvas id="cam_img" width="640" height="480></canvas>
+	<script>
+	var c=document.getElementById("cam_img");
+	var ctx=c.getContext("2d");
+	ctx.fillStyle="white";
+	//ctx.rect(0,0,640,480);
+	ctx.fill(); 
+	</script>
+</div>
+-->
+
+<div id="mjpeg"></div>
+<div style="text-align:center">
+
+
+<IFRAME id="cam_img" src="http://localhost:8080/stream?topic=/camera/image" align="center" width="640" height="480" scrolling="no" frameborder=no marginheight="0px">
+</IFRAME>
+</div>
+
+<div style="text-align:center">
+	<table align="center">
+		<tr>
+			<th></th>
+			<th>	
+				<button id="upB" onmousedown="rcService(3)" onmouseup="rcService(-3)">
+					<img src="forward.png" height="42" width="42">
+				</button>
+			</th>
+			<th></th>
+		</tr>
+		<tr>
+			<th>
+				<button id="leftB" onmousedown="rcService(1)" onmouseup="rcService(-1)">
+					<img src="left.png" height="42" width="42">
+				</button>
+			</th>
+			<th></th>
+			<th>
+				<button id="rightB" onmousedown="rcService(2)" onmouseup="rcService(-2)">
+					<img src="right.png" height="42" width="42">
+				</button>
+			</th>
+		</tr>
+		<tr>
+			<th></th>
+			<th>
+				<button id="downB" onmousedown="rcService(4)" onmouseup="rcService(-4)">
+					<img src="stop.png" height="42" width="42">
+				</button>
+			</th>
+			<th></th>
+		</tr>	
+	</table>
+	<br><br>
+	<button id="startCam" onclick="startCam()">
+		start camera
+	</button>
+
+	<button id="stopCam" onclick="stopCam()">
+		stop camera
+	</button>
+
+	<br><br>
+	<form>
+	Camera topic:<input type="text" id="ROS_TOPIC" value="/camera/image">
+	<br>
+	Roscore adress:<input type="text" id="ROS_HOST" value="localhost:9090">
+	</form>
+		<br><br>
+	<button id="submit" onClick="submit()">
+		Submit
+	</button>
+</div>	
+	
+<!-- 
+	ROS Connection 
+ -->
+
+<script type="text/javascript" src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script type="text/javascript" src="http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+ <!--
+<script type="text/javascript" src="eventemitter2.min.js"></script>
+<script type="text/javascript" src="roslib.min.js"></script>
+-->
+<script type="text/javascript" type="text/javascript">
+		// Connecting to ROS
+		// -----------------
+		
+		var ros = new ROSLIB.Ros({
+			url : 'ws://localhost:9090'
+		});
+
+		ros.on('connection', function() {
+			console.log('Connected to websocket server.');
+		});
+
+		ros.on('error', function(error) {
+			console.log('Error connecting to websocket server: ', error);
+		});
+
+		ros.on('close', function() {
+			console.log('Connection to websocket server closed.');
+		});
+		connectSRV(); 
+
+		// services
+		// -----------------
+		var car_client;
+		var cam_start_client;
+		var cam_stop_client;
+
+		function connectSRV() {
+			car_client = new ROSLIB.Service({
+				ros : ros,
+				name : '/car_service',
+				serviceType : 'ros_pi/Rpi_car'
+			});
+
+			cam_start_client = new ROSLIB.Service({
+				ros : ros,
+				name : '/camera/start_capture',
+				serviceType : 'std_srvs/Empty'
+			});
+
+			cam_stop_client = new ROSLIB.Service({
+				ros : ros,
+				name : '/camera/stop_capture',
+				serviceType : 'std_srvs/Empty'
+			});
+		}
+
+
+
+	    // js functions
+	  	// -----------------
+		function rcService(mod) {
+    		var request = new ROSLIB.ServiceRequest({
+    			mode : mod
+  			});
+  			car_client.callService(request);
+		};	
+
+		function startCam() {
+    		var request = new ROSLIB.ServiceRequest({});
+  			cam_start_client.callService(request);
+		};	
+
+		function stopCam() {
+    		var request = new ROSLIB.ServiceRequest({});
+  			cam_stop_client.callService(request);
+		};
+
+		function submit() {
+			alert("new topic and host");
+			var topic = document.getElementById("ROS_TOPIC").value;
+			var host = document.getElementById("ROS_HOST").value;
+			var port = host.substring(host.search(":"));
+			host = host.substring(0,host.search(":"));
+
+    		ros = new ROSLIB.Ros({
+				url : 'ws://' + host + port
+			});
+			connectSRV();
+
+			document.getElementById("cam_img").src = 'http://'+ host +'/stream?topic='+ topic;
+		};
+
+		// Subscribing to camera topic
+		// ----------------------
+/*
+		var cam_listener = new ROSLIB.Topic({
+			ros : ros,
+			name : '/camera/image/compressed',
+			messageType : 'sensor_msgs/CompressedImage'
+		});
+		cam_listener.subscribe(function(message) {
+					console.log('Received message '+ message.header.seq);
+				/// TODO: update  camera output in browser
+
+				}
+			);
+*/
+		window.onbeforeunload = closingCode;
+		function closingCode(){
+		   //cam_listener.unsubscribe();
+		   return null;
+		};
+</script>
+
+</body>
+</html> 
