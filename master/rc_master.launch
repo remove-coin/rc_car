@@ -5,12 +5,16 @@
      <arg name="port" value="9090"/>
   </include>
   
-  <!-- start the web_video_server websocket-->
+    <!-- start the web_video_server websocket 
+  <node name="mjpegsrv" pkg="mjpeg_server" type="mjpeg_server" respawn="true" args=" _port:=8080"
+   /> -->
+  
+  <!-- start the web_video_server websocket -->
   <node name="web_vid" pkg="web_video_server" type="web_video_server" respawn="true"
-   />
+   args=" _image_transport:=compressed _port:=8080 _ros_threads:=2 _server_threads:=1"/> 
   	<!--ros_threads do the actual image encoding, shared between all current streams  -->
-  	<!-- server_threads serve HTTP requests 
-  	args="port:=8080 ros_threads:=2 server_threads:=1"
-  	-->
+  	<!-- server_threads serve HTTP requests -->
+  	
+  	
 
 </launch>

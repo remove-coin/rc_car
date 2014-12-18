@@ -26,7 +26,9 @@ Add host/master exports to ~/.bashrc
 2.
 Get the ros_bridge-suite and web_video_server for your ros version:
 	sudo apt-get install ros-<rosversion>-rosbridge-suite
+	sudo apt-get install ros-<rosversion>-mjpeg-server
 	sudo apt-get install ros-<rosversion>-web-video-server
+	
 
 Install ros on your rpi by following until step 3: 
 		http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi 
@@ -68,15 +70,21 @@ broadcom numbers and must be exported by a shell script before rosrun.
 ON the rpi:
 start the camera and car_service node:
 	roslaunch ros_pi rc.launch
-	
-rosrun raspicam raspicam_node
-rosrun ros_pi car_service
+or seperate:	
+	rosrun raspicam raspicam_node
+	rosrun ros_pi car_service
 	
 	
 	
 	
 ON the master:
+start the web_video_server and ros_bridge
 	roslaunch master rc_master.launch 
 	
-	rosrun web_video_server web_video_server
-	rosrun image_view image_view image:=/camera/image _image_transport:=compressed
+rosrun web_video_server web_video_server _image_transport:=compressed
+
+the camerastream can be watched at:
+	http://localhost:8080/stream_viewer?topic=/camera/image/
+for htlm-<img> use:	
+	http://localhost:8080/stream?topic=/camera/image/
+
