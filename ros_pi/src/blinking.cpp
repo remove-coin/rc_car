@@ -1,37 +1,30 @@
 #include "ros/ros.h"
 #include "ros_pi/Rpi_car.h"
 #include <wiringPi.h>
-#include <softPwm.h>
-
 
 /*
-	define the io pins
-	M1: fwd/backwd
-	M2: steering
+    define the io pin of the transistor
 */
 //use BCM numbers for code, and wiringPi for export in the setup  sh
 //wiringPi pin 7 == BCM_GPIO 4
-#define	M1_A 7
-//wiringPi pin 1 == BCM_GPIO 18
-#define M1_B 1
-
-//wiringPi pin 3 == BCM_GPIO 22
-#define M2_A 3
+#define	LED_1 7
 //wiringPi pin 4 == BCM_GPIO 23
-#define M2_B  4
-
-//enable pin of the engine
+#define LED_2 4
 //wiringPi pin 0 == BCM_GPIO 17
-#define M1_E 0
-//wiringPi pin 6 == BCM_GPIO 25
-#define M2_E 6
+#define LED_3 0
+
+//wiringPi pin 1 == BCM_GPIO 18
+//pwm_pin == enable pin of the engine 
+#define PWM_PIN 1
 
 //amount of gears/pwm levels
-#define TOP_SPEED 40
+#define TOP_SPEED 20
 
 int direction, speed;
 bool accelerate, brake, lights;
 
+//maximum of 1023
+int values[TOP_SPEED + 1];
 
 /// ===============================
 void honk() {
@@ -90,23 +83,19 @@ int main(int argc, char **argv)
     direction = 0;
     speed = 0;
     accelerate = false;
+    for (int i = 0; i <= TOP_SPEED; i++) {
+    	values[i] = i*(1000/TOP_SPEED);
+    }
 
     wiringPiSetup();
-    pinMode (M1_A, OUTPUT);
-    pinMode (M1_B, OUTPUT);
-    pinMode (M2_A, OUTPUT);
-    pinMode (M2_B, OUTPUT);
-    //pin,initVal,pwmRange
-    softPwmCreate (M1_E, 0, TOP_SPEED);
-    softPwmCreate (M2_E, 0, 100) ;
+    pinMode (LED_1, OUTPUT);
+    pinMode (LED_2, OUTPUT);
+    pinMode (LED_3, OUTPUT);
+    pinMode (PWM_PIN, PWM_OUTPUT) ;
 
     //init pins
-    digitalWrite(M1_A, LOW);
-    digitalWrite(M1_B, LOW);
-    digitalWrite(M2_A, LOW);
-    digitalWrite(M2_B, LOW);
-    softPwmWrite (M1_E, 0);
-    softPwmWrite (M2_E, 0);
+    digitalWrite(LED_2, HIGH);
+    pwmWrite (PWM_PIN, 0) ;
 
     ros::init(argc, argv, "car_service");
     ros::NodeHandle n;
@@ -116,27 +105,38 @@ int main(int argc, char **argv)
     while(ros::ok()) {
         if(speed < TOP_SPEED && accelerate == true) {
             speed++;
-	    softPwmWrite(M1_E, speed);
+	    pwmWrite(PWM_PIN, values[speed]);
         }
         if (speed > 0 && brake) {
             //braking added to rollout
             speed--;
-	    softPwmWrite(M1_E, speed);
+	    pwmWrite(PWM_PIN, values[speed]);
         }
         if (speed > 0 && !accelerate) {
             //rollout
             speed--;
-	    softPwmWrite(M1_E, speed);
+	    pwmWrite(PWM_PIN, values[speed]);
         }
         if(direction != 0) {
             if(direction == 1) {
                 //ROS_INFO("go left");
+                digitalWrite(LED_1, HIGH);	// On
+		digitalWrite(LED_2, LOW);   // On
+		digitalWrite(LED_3, LOW);   // On
+                //delay (500) ;		// mS
             } else {
                 //ROS_INFO("go right");
+                digitalWrite(LED_1, LOW);
+		digitalWrite(LED_2, LOW);
+		digitalWrite(LED_3, HIGH);
             }
         } else {
+		digitalWrite(LED_1, LOW);
+		digitalWrite(LED_2, HIGH);
+		digitalWrite(LED_3, LOW);
 
 	}
+        /** set actual motors connected to the rpi*/
 
         ros::Duration(0.25).sleep();
         ros::spinOnce();
