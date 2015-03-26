@@ -27,9 +27,9 @@
 #define M2_E 6
 
 //amount of gears/pwm levels
-#define TOP_SPEED 100
+#define TOP_SPEED 30
 //full stop at gear
-#define FULLSTOP 25
+#define FULLSTOP 10
 
 int direction, speed;
 bool accelerate, brake, lights;
@@ -71,10 +71,12 @@ bool plan(ros_pi::Rpi_car::Request  &req,
         break;}
     case 3: ///accelerate
     {
+	speed += 10;
         accelerate = true;
         break;}
     case 4: ///brake
     {
+	speed -= 5;
         brake = true;
         break;}
     /// ############ ///
@@ -117,11 +119,24 @@ int main(int argc, char **argv)
 
     while(ros::ok()) {
         if(speed < TOP_SPEED && accelerate == true) {
-            speed++;
+/*		if(speed = FULLSTOP) {
+			//skip low pwm levels
+			speed =speed+7;
+		} else {
+            		speed++;
+		}*/
+	    speed++;
+
         }
         if (speed > 0 && brake) {
             //braking added to rollout and backwards
-            speed--;
+             /* if(speed = FULLSTOP) {
+                        //skip low pwm levels
+                        speed -=(int)0.1*TOP_SPEED;
+                } else {
+                        speed--;
+                }*/
+	    speed--;
         }
         if (speed > FULLSTOP && !accelerate) {
             //rollout till fullstop
@@ -131,8 +146,6 @@ int main(int argc, char **argv)
 	    //rollout braking
 	    speed++;
 	}
-	//write pwm speed
-	softPwmWrite(M1_E, abs(speed-FULLSTOP));
 
 	if(speed >= FULLSTOP) {
 	    //forward
@@ -143,6 +156,9 @@ int main(int argc, char **argv)
 	    digitalWrite(M1_B, LOW);
 	    digitalWrite(M1_A, HIGH);
 	}
+	//write pwm speed
+	softPwmWrite(M1_E, abs(speed-FULLSTOP));
+
 
         if(direction != 0) {
             if(direction == 1) {
