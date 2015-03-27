@@ -1,7 +1,8 @@
 rc_car
 ======
 
-1. Set the hostnames
+1 Set the hostnames
+
 1.1. 
 the rpi to "rp1"
 the server "ros-linux"
@@ -27,7 +28,8 @@ on the server
 	export ROS_MASTER_URI=http://ros-linux.local:11311
 
 ============================
-2. ROS
+
+2 ROS
 
 2.1. Installing ros on the pi
 
@@ -57,7 +59,7 @@ If you don't want to compile ros twice, add "image_common" during step two.
 
 ============================
 
-3. Get raspicam by fpastbeau
+3 Get raspicam by fpastbeau
 
 	https://github.com/fpasteau/raspicam_node/blob/master/README.md
 
