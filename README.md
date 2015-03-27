@@ -1,5 +1,7 @@
 rc_car
 ======
+0 Setup
+set locale with "export LC_ALL=C" in .bashrc
 
 1 Set the hostnames
 
@@ -33,22 +35,43 @@ on the server
 
 2.1. Installing ros on the pi
 
-Install ros on your rpi by following until step 3: 
+Install ros on your rpi by following the first step "Prerequisites" of this guide: 
 		http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi 
 		
 We need to add image_common, and do so in a custom_ros.install.
-If you don't want to compile ros twice, add "image_common" during step two.
-		
+Since we don't want to compile ros twice, we add "image_common" during step two.
+
+	mkdir ~/ros_catkin_ws	
  	cd ~/ros_catkin_ws
 	
 	rosinstall_generator ros_comm image_common --rosdistro indigo --deps --wet-only --exclude roslisp --tar > indigo-custom_ros.rosinstall
+	
+	wstool init src indigo-custom_ros.rosinstall
 
 	wstool merge -t src indigo-custom_ros.rosinstall
 
 	wstool update -t src
 
+Get the depencies like step 2.2 from the guide:
 
+	mkdir ~/ros_catkin_ws/external_src
+ 	sudo apt-get install checkinstall cmake
+ 	sudo sh -c 'echo "deb-src http://mirrordirector.raspbian.org/raspbian/ testing main contrib non-free rpi" >> /etc/apt/sources.list'
+ 	sudo apt-get update
+
+	cd ~/ros_catkin_ws/external_src
+ 	sudo apt-get build-dep console-bridge
+ 	apt-get source -b console-bridge
+ 	sudo dpkg -i libconsole-bridge0.2_*.deb libconsole-bridge-dev_*.deb
+
+ 	cd ~/ros_catkin_ws/external_src
+ 	apt-get source -b lz4
+ 	sudo dpkg -i liblz4-*.deb
+
+	cd ~/ros_catkin_ws
 	rosdep install --from-paths src --ignore-src --rosdistro indigo -y -r --os=debian:wheezy
+
+Compile ros, this will take a while:
 
 	sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/indigo
 	
