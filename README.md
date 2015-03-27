@@ -1,7 +1,12 @@
 rc_car
 ======
 
-1. install avahi-daemon 
+1. Set the hostnames
+1.1. 
+the rpi to "rp1"
+the server "ros-linux"
+
+For example with avahi-daemon: 
 
 	sudo apt-get install avahi-daemon
 	sudo apt-get install libnss-mdns 
@@ -12,7 +17,7 @@ on the pi
 on the server
 	host:ros-linux
 
-Add host/master exports to ~/.bashrc
+1.2. Add host/master exports to ~/.bashrc
 .bashrc master:
 	export ROS_HOSTNAME=ros-linux.local
 	export ROS_MASTER_URI=http://ros-linux.local:11311
@@ -22,19 +27,15 @@ Add host/master exports to ~/.bashrc
 	export ROS_MASTER_URI=http://ros-linux.local:11311
 
 ============================
+2. ROS
 
-2.
-Get the ros_bridge-suite and web_video_server for your ros version:
-	sudo apt-get install ros-<rosversion>-rosbridge-suite
-	sudo apt-get install ros-<rosversion>-mjpeg-server
-	sudo apt-get install ros-<rosversion>-web-video-server
-	
+2.1. Installing ros on the pi
 
 Install ros on your rpi by following until step 3: 
 		http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi 
 		
 We need to add image_common, and do so in a custom_ros.install.
-If you don't want to compile ros twice, add image_common during step two.
+If you don't want to compile ros twice, add "image_common" during step two.
 		
  	cd ~/ros_catkin_ws
 	
@@ -48,6 +49,11 @@ If you don't want to compile ros twice, add image_common during step two.
 	rosdep install --from-paths src --ignore-src --rosdistro indigo -y -r --os=debian:wheezy
 
 	sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/indigo
+	
+2.2. Get the ros_bridge-suite and web_video_server for your ros version:
+	sudo apt-get install ros-<rosversion>-rosbridge-suite
+	sudo apt-get install ros-<rosversion>-mjpeg-server
+	sudo apt-get install ros-<rosversion>-web-video-server	
 
 ============================
 
@@ -65,7 +71,7 @@ To use pwm in wiringPi, the service must be run as root.
 The rc.launch file creates the service node with the launch-prefix "sudo -E".
 Given a passwordless sudoer, the environtment is kept and the node can be run as root.
 Without the pwm wiringPiSys() can be used as non-root, but all pins use the 
-broadcom numbers and must be exported by a shell script before rosrun.
+broadcom numbers and must be exported by a shell script before rosrun. Only wpi pin 18 supports natviely pwm
 
 ON the rpi:
 start the camera and car_service node:
