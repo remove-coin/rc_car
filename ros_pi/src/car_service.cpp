@@ -118,57 +118,74 @@ int main(int argc, char **argv)
     ros::ServiceServer service = n.advertiseService("/car_service", plan);
 
     while(ros::ok()) {
+        /// logic ///
         if(speed < TOP_SPEED && accelerate == true) {
-/*		if(speed = FULLSTOP) {
-			//skip low pwm levels
-			speed =speed+7;
-		} else {
-            		speed++;
-		}*/
-	    speed++;
+            if(speed = FULLSTOP) {
+                //skip low pwm levels
+                speed += TOP_SPEED/5;
+            } else {
+                        speed++;
+            }
+        //speed++;
 
         }
+
         if (speed > 0 && brake) {
             //braking added to rollout and backwards
-             /* if(speed = FULLSTOP) {
+             if(speed = FULLSTOP) {
                         //skip low pwm levels
-                        speed -=(int)0.1*TOP_SPEED;
+                        speed -= TOP_SPEED/10;
                 } else {
                         speed--;
-                }*/
-	    speed--;
+                }
+        //speed--;
         }
+
         if (speed > FULLSTOP && !accelerate) {
             //rollout till fullstop
             speed--;
         }
-	if (speed < FULLSTOP && !brake) {
-	    //rollout braking
-	    speed++;
-	}
 
-	if(speed >= FULLSTOP) {
-	    //forward
-	    digitalWrite(M1_A, LOW);
-	    digitalWrite(M1_B, HIGH);
-	} else {
-	    //backward
-	    digitalWrite(M1_B, LOW);
-	    digitalWrite(M1_A, HIGH);
-	}
-	//write pwm speed
-	softPwmWrite(M1_E, abs(speed-FULLSTOP));
+        if (speed < FULLSTOP && !brake) {
+            //rollout braking
+            speed++;
+        }
+
+        /// digital io ///
+        //set motor spin direction
+        if(speed >= FULLSTOP) {
+            //forward
+            digitalWrite(M1_A, LOW);
+            digitalWrite(M1_B, HIGH);
+        } else {
+            //backward
+            digitalWrite(M1_A, HIGH);
+            digitalWrite(M1_B, LOW);
+        }
+        //write pwm speed
+        softPwmWrite(M1_E, abs(speed-FULLSTOP));
 
 
         if(direction != 0) {
             if(direction == 1) {
                 //ROS_INFO("go left");
+                digitalWrite(M1_A, LOW);
+                digitalWrite(M1_B, HIGH);
             } else {
                 //ROS_INFO("go right");
-            }
-        } else {
+                digitalWrite(M1_A, HIGH);
+                digitalWrite(M1_B, LOW);
 
-	}
+
+            }
+            //turn steering motor on
+            softPwmWrite(M2_E, 100);
+            } else {
+                //set direction straight/turn steering motor off
+                softPwmWrite(M2_E, 0);
+                digitalWrite(M1_A, LOW);
+                digitalWrite(M1_B, LOW);
+            }
 
         ros::Duration(0.25).sleep();
         ros::spinOnce();
